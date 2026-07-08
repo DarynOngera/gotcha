@@ -25,12 +25,17 @@ sudo pacman -S base-devel dbus
 ## 2. Build
 
 ```bash
-gcc -O2 -o notify_logger notify_logger.c $(pkg-config --cflags --libs dbus-1)
+make
+```
+
+Or manually:
+```bash
+gcc -O2 -Wall -Wextra -o build/notify_logger logger.c $(pkg-config --cflags --libs dbus-1)
 ```
 
 Test it manually first (Ctrl+C to stop):
 ```bash
-./notify_logger --app whatsapp-linux-app --sender Joy --out ./matches.log
+./build/notify_logger --app whatsapp-linux-app --sender Joy --out ./matches.log
 ```
 Send yourself a test notification, or wait for a real one, and confirm a line
 appears in `matches.log` and on stdout, e.g.:
@@ -43,9 +48,9 @@ If nothing shows up, see **Troubleshooting** below (`eavesdrop` policy).
 ## 3. Install as a persistent user service (systemd)
 
 ```bash
-mkdir -p ~/.local/bin ~/notify_logger ~/.config/systemd/user
-cp notify_logger ~/.local/bin/
-cp notify-logger.service ~/.config/systemd/user/
+make install
+mkdir -p ~/notify_logger ~/.config/systemd/user
+cp logger.service ~/.config/systemd/user/notify-logger.service
 
 systemctl --user daemon-reload
 systemctl --user enable --now notify-logger.service
