@@ -1,4 +1,4 @@
-# notify_logger — Build & Install
+# Build & Install
 
 A small D-Bus listener that watches for `org.freedesktop.Notifications.Notify`
 calls, filters by app name + sender, and appends matches to a plain-text log
