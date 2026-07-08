@@ -30,7 +30,7 @@ gcc -O2 -o notify_logger notify_logger.c $(pkg-config --cflags --libs dbus-1)
 
 Test it manually first (Ctrl+C to stop):
 ```bash
-./notify_logger --app whatsapp-linux-app --sender Joy --out ./matches.log
+./notify_logger --app whatsapp-linux-app --sender sender --out ./matches.log
 ```
 Send yourself a test notification, or wait for a real one, and confirm a line
 appears in `matches.log` and on stdout, e.g.:
