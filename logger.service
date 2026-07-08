@@ -1,0 +1,13 @@
+[Unit]
+Description=WhatsApp notification logger (D-Bus Notify listener)
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/notify_logger --app whatsapp-linux-app --sender sender --out %h/notify_logger/matches.log
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target
