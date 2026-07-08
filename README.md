@@ -1,4 +1,4 @@
-# notify_logger — Build & Install
+# Build & Install
 
 A small D-Bus listener that watches for `org.freedesktop.Notifications.Notify`
 calls, filters by app name + sender, and appends matches to a plain-text log
@@ -35,12 +35,12 @@ gcc -O2 -Wall -Wextra -o build/notify_logger logger.c $(pkg-config --cflags --li
 
 Test it manually first (Ctrl+C to stop):
 ```bash
-./build/notify_logger --app whatsapp-linux-app --sender Joy --out ./matches.log
+./notify_logger --app whatsapp-linux-app --sender Name --out ./matches.log
 ```
 Send yourself a test notification, or wait for a real one, and confirm a line
 appears in `matches.log` and on stdout, e.g.:
 ```
-[2026-07-08 14:32:10] Joy: hey, are you around?
+[2026-07-08 14:32:10] Name : hey, are you around?
 ```
 
 If nothing shows up, see **Troubleshooting** below (`eavesdrop` policy).
