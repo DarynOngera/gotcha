@@ -1,8 +1,8 @@
 # Build & Install
 
 A small D-Bus listener that watches for `org.freedesktop.Notifications.Notify`
-calls, filters by app name + sender, and appends matches to a plain-text log
-file in a human-readable `[timestamp] Sender: body` format. Runs as a
+calls, filters by app name + body, and appends matches to a plain-text log
+file in a human-readable `[timestamp] summary: body` format. Runs as a
 persistent systemd user service so it survives logouts/reboots.
 
 ## 1. Dependencies
@@ -35,12 +35,12 @@ gcc -O2 -Wall -Wextra -o build/notify_logger logger.c $(pkg-config --cflags --li
 
 Test it manually first (Ctrl+C to stop):
 ```bash
-./notify_logger --app whatsapp-linux-app --sender Name --out ./matches.log
+./notify_logger --app whatsapp-linux-app --body "hey, are you around?" --out ./matches.log
 ```
 Send yourself a test notification, or wait for a real one, and confirm a line
 appears in `matches.log` and on stdout, e.g.:
 ```
-[2026-07-08 14:32:10] Name : hey, are you around?
+[2026-07-08 14:32:10] Name: hey, are you around?
 ```
 
 If nothing shows up, see **Troubleshooting** below (`eavesdrop` policy).
@@ -67,7 +67,7 @@ systemctl --user status notify-logger.service
 journalctl --user -u notify-logger.service -f
 ```
 
-To change the target app/sender/output path, edit the `ExecStart=` line in
+To change the target app/body/output path, edit the `ExecStart=` line in
 `~/.config/systemd/user/notify-logger.service`, then:
 ```bash
 systemctl --user daemon-reload
@@ -107,10 +107,8 @@ If `dbus-monitor` also sees nothing, your session bus config is restricting
 eavesdropping — check `/usr/share/dbus-1/session.conf` and any drop-ins under
 `/etc/dbus-1/session.d/` for `<policy>` rules limiting `eavesdrop`.
 
-**`summary` doesn't match the sender name you expect:**
-Not all apps put the contact name in `summary`. If matching by `summary`
-alone is unreliable for your WhatsApp client build, run `dbus-monitor` while
-receiving a message from the target contact and inspect the actual argument
-order/values — some clients put the sender in `body` prefix text instead, or
-expose a more stable identifier in the `hints` dict (6th positional arg),
-which this program currently doesn't parse.
+**Body text doesn't match what you expect:**
+The `--body` filter is an exact, case-sensitive match against the D-Bus
+notification `body` field. If matches are missing, run `dbus-monitor` while
+receiving a message and inspect the actual `summary` and `body` argument
+values for your client build.

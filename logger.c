@@ -11,7 +11,7 @@
 
 /* Defaults - overridable via argv */
 static const char *g_target_app    = "";
-static const char *g_target_sender = "";
+static const char *g_target_body   = "";
 static const char *g_out_path      = "./logs/matches.log";
 
 #define FIELD_BUF_SIZE 4096
@@ -103,7 +103,7 @@ static void handle_message(DBusMessage *msg) {
     next_arg(&args, DBUS_TYPE_STRING, &body);
 
     if (app_name != NULL && summary != NULL && body != NULL) {
-        if (strcmp(app_name, g_target_app) == 0 && strcmp(summary, g_target_sender) == 0) {
+        if (strcmp(app_name, g_target_app) == 0 && strcmp(body, g_target_body) == 0) {
             write_match(summary, body);
         }
     }
@@ -178,19 +178,19 @@ static void ensure_out_dir(void) {
 
 static void print_usage(const char *prog) {
     fprintf(stderr,
-        "Usage: %s [--app APP_NAME] [--sender SENDER_NAME] [--out FILE]\n"
+        "Usage: %s [--app APP_NAME] [--body BODY_TEXT] [--out FILE]\n"
         "  --app     D-Bus app_name to match (default: %s)\n"
-        "  --sender  Notification summary/title to match (default: %s)\n"
+        "  --body    Notification body to match (default: %s)\n"
         "  --out     File to append matches to (default: stdout only)\n",
-        prog, g_target_app, g_target_sender);
+        prog, g_target_app, g_target_body);
 }
 
 static void parse_args(int argc, char **argv) {
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--app") == 0 && i + 1 < argc) {
             g_target_app = argv[++i];
-        } else if (strcmp(argv[i], "--sender") == 0 && i + 1 < argc) {
-            g_target_sender = argv[++i];
+        } else if (strcmp(argv[i], "--body") == 0 && i + 1 < argc) {
+            g_target_body = argv[++i];
         } else if (strcmp(argv[i], "--out") == 0 && i + 1 < argc) {
             g_out_path = argv[++i];
         } else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
@@ -239,8 +239,8 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    fprintf(stderr, "notify_logger running (app=%s sender=%s out=%s)\n",
-            g_target_app, g_target_sender,
+    fprintf(stderr, "notify_logger running (app=%s body=%s out=%s)\n",
+            g_target_app, g_target_body,
             g_out_path != NULL ? g_out_path : "(stdout only)");
 
     while (dbus_connection_read_write_dispatch(conn, -1)) {

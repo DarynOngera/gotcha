@@ -5,7 +5,7 @@ PartOf=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=%h/.local/bin/notify_logger --app whatsapp-linux-app --sender sender --out %h/notify_logger/matches.log
+ExecStart=%h/.local/bin/notify_logger --app whatsapp-linux-app --body "exact notification body text" --out %h/notify_logger/matches.log
 Restart=on-failure
 RestartSec=3
 
